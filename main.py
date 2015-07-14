@@ -18,6 +18,9 @@ accessLogFilenameSuccess = "accessLogSuccess.txt"
 accessLogFilenameFail = "accessLogFail.txt"
 trustedCardsFileName = "trustedCards.txt"
 
+#number of seconds to hold the door open
+openDoorTime = 15
+
 #################
 #Mos Def
 #################
@@ -30,9 +33,11 @@ def LogAccessFail(cID):
         accessFile.write(str(datetime.datetime.now()) + ":" + str(cID)  + "\n")
 
 def UnlockDoor():
+    print "Open Door"
     GPIO.output(LATCH_PIN, 1)
 
 def LockDoor():
+    print "Lock Door"
     GPIO.output(LATCH_PIN, 0)
 
 # Capture SIGINT for cleanup when the script is aborted
@@ -72,21 +77,11 @@ with open(trustedCardsFileName, 'r') as cardsFile:
             fpCard.append(c)
         trustedCards.append(fpCard)
 
-#how much total time should the door be open upon correct card
-totalOpenTime = 15
 
-doorLock = True
-lastValidUnlockTime = 0
 
 # This loop keeps checking for chips. If one is near it will get the UID and authenticate
 while continue_reading:
     print '.'
-
-    #maybe it's time to close the door
-    if time.time() > lastValidUnlockTime + totalOpenTime:
-        print "Door Locked"
-        LockDoor()
-
 
     # Scan for cards
     (status,TagType) = MIFAREReader.MFRC522_Request(MIFAREReader.PICC_REQIDL)
@@ -108,7 +103,7 @@ while continue_reading:
             if (card == uid):
                 print "Matches"
                 UnlockDoor()
-                lastValidUnlockTime = time.time()
+                time.sleep(openDoorTime)
                 LogAccessSuccess(uid)
                 cardValid = True
 
