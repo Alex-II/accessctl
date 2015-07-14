@@ -6,7 +6,6 @@ import MFRC522
 import signal
 import time
 from array import array
-import base64
 import datetime
 
 
@@ -16,29 +15,28 @@ import datetime
 LATCH_PIN = 11
 
 accessLogFilenameSuccess = "accessLogSuccess.txt"
-accessLogFilenameFail    = "accessLogFail.txt"
+accessLogFilenameFail = "accessLogFail.txt"
 trustedCardsFileName = "trustedCards.txt"
 
 #################
 #Mos Def
 #################
 
-def LogAccessSuccess(card):
-        with open(accessLogFilenameSuccess, 'a') as accessFile:
-                accessFile.write(str(datetime.datetime.now()) + ":" + str(card) + "\n" )
-def LogAccessFail(card):
-        with open(accessLogFilenameFail, 'a') as accessFile:
-                accessFile.write(str(datetime.datetime.now()) + ":" + str(card)  + "\n")
+def LogAccessSuccess(cID):
+    with open(accessLogFilenameSuccess, 'a') as accessFile:
+        accessFile.write(str(datetime.datetime.now()) + ":" + str(cID) + "\n")
+def LogAccessFail(cID):
+    with open(accessLogFilenameFail, 'a') as accessFile:
+        accessFile.write(str(datetime.datetime.now()) + ":" + str(cID)  + "\n")
 
 def UnlockDoor():
-        GPIO.output(LATCH_PIN, 1)
+    GPIO.output(LATCH_PIN, 1)
 
 def LockDoor():
-        GPIO.output(LATCH_PIN, 0)
+    GPIO.output(LATCH_PIN, 0)
 
 # Capture SIGINT for cleanup when the script is aborted
-def end_read(signal,frame):
-    global continue_reading
+def end_read(signal, frame):
     print "Ctrl+C captured, ending read."
     continue_reading = False
     LockDoor()
@@ -46,7 +44,7 @@ def end_read(signal,frame):
 
 
 #################
-## Main 
+## Main
 #################
 continue_reading = True
 
@@ -63,29 +61,29 @@ MIFAREReader = MFRC522.MFRC522()
 
 trustedCards = []
 with open(trustedCardsFileName, 'r') as cardsFile:
-        lines = cardsFile.readlines()
-        for line in lines:
-                #map isn't working, wtf
-                card = line.split(",")
-                fpCard = []
-                for c in card:
-                        c = str.strip(c)
-                        c = int(c)
-                        fpCard.append(c)
-                trustedCards.append(fpCard)
+    lines = cardsFile.readlines()
+    for line in lines:
+        #map isn't working, wtf
+        card = line.split(",")
+        fpCard = []
+        for c in card:
+            c = str.strip(c)
+            c = int(c)
+            fpCard.append(c)
+        trustedCards.append(fpCard)
 
 #how much total time should the door be open upon correct card
 totalOpenTime = 15
 
-doorLock = True;
-lastValidUnlockTime = 0;
+doorLock = True
+lastValidUnlockTime = 0
 
 # This loop keeps checking for chips. If one is near it will get the UID and authenticate
 while continue_reading:
     print '.'
 
     #maybe it's time to close the door
-    if(time.time() > lastValidUnlockTime + totalOpenTime):
+    if time.time() > lastValidUnlockTime + totalOpenTime:
         print "Door Locked"
         LockDoor()
 
@@ -98,7 +96,7 @@ while continue_reading:
         print "Card detected"
 
     # Get the UID of the card
-    (status,uid) = MIFAREReader.MFRC522_Anticoll()
+    (status, uid) = MIFAREReader.MFRC522_Anticoll()
 
     # If we have the UID, continue
     if status == MIFAREReader.MI_OK:
@@ -107,19 +105,21 @@ while continue_reading:
         print "Card Read:" + str(uid)
         cardValid = False
         for card in trustedCards:
-                if (card == uid):
-                        print "Matches"
-                        UnlockDoor()
-                        lastValidUnlockTime = time.time()
-                        LogAccessSuccess(uid)
-                        cardValid = True
+            if (card == uid):
+                print "Matches"
+                UnlockDoor()
+                lastValidUnlockTime = time.time()
+                LogAccessSuccess(uid)
+                cardValid = True
 
-                else:
-                        print "No Match"
+            else:
+                print "No Match"
+
         if(cardValid == False):
-                LogAccessFail(uid)
+            LogAccessFail(uid)
 
-        #print(  base64.urlsafe_b64encode(a.tostring()).replace('=','')  )
+
+print "Exiting normally :)"
 
 
 
