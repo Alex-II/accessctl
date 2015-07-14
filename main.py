@@ -25,6 +25,8 @@ openDoorTime = 15
 #Mos Def
 #################
 
+continue_reading = True
+
 def LogAccessSuccess(cID):
     with open(accessLogFilenameSuccess, 'a') as accessFile:
         accessFile.write(str(datetime.datetime.now()) + ":" + str(cID) + "\n")
@@ -51,7 +53,7 @@ def end_read(signal, frame):
 #################
 ## Main
 #################
-continue_reading = True
+
 
 # Hook the SIGINT
 signal.signal(signal.SIGINT, end_read)
@@ -104,11 +106,10 @@ while continue_reading:
                 print "Matches"
                 UnlockDoor()
                 time.sleep(openDoorTime)
+                LockDoor()
                 LogAccessSuccess(uid)
                 cardValid = True
 
-            else:
-                print "No Match"
 
         if(cardValid == False):
             LogAccessFail(uid)
