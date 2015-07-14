@@ -1,7 +1,7 @@
 #Our stuff
 accessLogSuccess.txt
 accessLogFail.txt
-trustedCards.txt"
+trustedCards.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
