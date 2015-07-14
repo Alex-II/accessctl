@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 
 import RPi.GPIO as GPIO
 import MFRC522
@@ -8,28 +8,20 @@ import time
 from array import array
 import base64
 import datetime
-continue_reading = True
 
 
-# Capture SIGINT for cleanup when the script is aborted
-def end_read(signal,frame):
-    global continue_reading
-    print "Ctrl+C captured, ending read."
-    continue_reading = False
-    LockDoor()
-    GPIO.cleanup()
-
-# Hook the SIGINT
-signal.signal(signal.SIGINT, end_read)
-
-GPIO.setmode(GPIO.BOARD)
-GPIO.setup(11, GPIO.OUT)
-
-# Create an object of the class MFRC522
-MIFAREReader = MFRC522.MFRC522()
+#################
+####Config
+#################
+LATCH_PIN = 11
 
 accessLogFilenameSuccess = "accessLogSuccess.txt"
 accessLogFilenameFail    = "accessLogFail.txt"
+trustedCardsFileName = "trustedCards.txt"
+
+#################
+#Mos Def
+#################
 
 def LogAccessSuccess(card):
         with open(accessLogFilenameSuccess, 'a') as accessFile:
@@ -39,14 +31,36 @@ def LogAccessFail(card):
                 accessFile.write(str(datetime.datetime.now()) + ":" + str(card)  + "\n")
 
 def UnlockDoor():
-        GPIO.output(11, 1)
+        GPIO.output(LATCH_PIN, 1)
 
 def LockDoor():
-        GPIO.output(11, 0)
+        GPIO.output(LATCH_PIN, 0)
+
+# Capture SIGINT for cleanup when the script is aborted
+def end_read(signal,frame):
+    global continue_reading
+    print "Ctrl+C captured, ending read."
+    continue_reading = False
+    LockDoor()
+    GPIO.cleanup()
+
+
+#################
+## Main 
+#################
+continue_reading = True
+
+# Hook the SIGINT
+signal.signal(signal.SIGINT, end_read)
+
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(LATCH_PIN, GPIO.OUT)
+
+# Create an object of the class MFRC522
+MIFAREReader = MFRC522.MFRC522()
 
 #Read list of accepted cards - expecting it to be in the same dir
 
-trustedCardsFileName = "trustedCards.txt"
 trustedCards = []
 with open(trustedCardsFileName, 'r') as cardsFile:
         lines = cardsFile.readlines()
