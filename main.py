@@ -44,6 +44,7 @@ def LockDoor():
 
 # Capture SIGINT for cleanup when the script is aborted
 def end_read(signal, frame):
+    global continue_reading #refactor this!
     print "Ctrl+C captured, ending read."
     continue_reading = False
     LockDoor()
