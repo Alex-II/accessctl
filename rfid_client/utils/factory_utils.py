@@ -1,5 +1,7 @@
 import logging, os, imp
 
+
+logger = logging.getLogger('Controller')
 def load_driver(available_drivers, driver_id):
     '''
     Excepts a dict of available drivers ( {'<driver_id>':'<driver_location'>} )
@@ -16,7 +18,7 @@ def load_driver(available_drivers, driver_id):
         raise KeyError("The driver id '{driver_id}' cannot be found in the list of available drivers".format(**locals()))
 
     filepath_relative = available_drivers[driver_id]
-    logging.debug("Resolving absolute path of '{filepath_relative}'".format(**locals()))
+    logger.debug("Resolving absolute path of '{filepath_relative}'".format(**locals()))
 
     filepath = os.path.abspath(filepath_relative)
 
@@ -24,7 +26,7 @@ def load_driver(available_drivers, driver_id):
     if '.' in driver_name:
         driver_name = ".".join(driver_name.split(".")[:-1])
 
-    logging.debug("Loading driver '{driver_name}' located at '{filepath}'".format(**locals()))
+    logger.debug("Loading driver '{driver_name}' located at '{filepath}'".format(**locals()))
 
     module = imp.load_source('driver', filepath)
 
@@ -44,7 +46,7 @@ def get_availble_drivers(available_driers_file):
     :param available_driers_file: str
     :return: dict
     '''
-    logging.debug("Loading up list of available drivers from file '{available_driers_file}'".format(**locals()))
+    logger.debug("Loading up list of available drivers from file '{available_driers_file}'".format(**locals()))
 
     drivers = {}
     with open(available_driers_file, 'r') as fd:
@@ -54,17 +56,17 @@ def get_availble_drivers(available_driers_file):
             line_no_comments = line.split("#")[0]
 
             if ',' in line_no_comments:
-                logging.debug('Parsing line: "{line}" '.format(**locals()))
+                logger.debug('Parsing line: "{line}" '.format(**locals()))
 
                 identifier = line_no_comments.split(",")[0].strip()
                 driver_location = line_no_comments.split(",")[1].strip()
 
-                logging.debug("  Parsed '{identifier}' at '{driver_location}'".format(**locals()))
+                logger.debug("  Parsed '{identifier}' at '{driver_location}'".format(**locals()))
                 if len(identifier) == 0:
-                    logging.warning(  "Driver identifier for this line is empty")
+                    logger.warning(  "Driver identifier for this line is empty")
 
                 if not os.path.isfile(driver_location):
-                    logging.warning("  Driver location on this line cannot be found on filesystem")
+                    logger.warning("  Driver location on this line cannot be found on filesystem")
 
                 drivers[identifier] = driver_location
     return drivers
@@ -76,9 +78,9 @@ def get_driver_identifier(identifier_file):
     :param identifier_file: str
     :return: str
     '''
-    logging.debug("Reading file '{identifier_file}' to identify what driver to load".format(**locals()))
+    logger.debug("Reading file '{identifier_file}' to identify what driver to load".format(**locals()))
     with open(identifier_file,'r') as fd:
         identifier = fd.read()
         identifier.strip("\n").strip()
-    logging.debug("Reader ID specified in file: '{identifier}'".format(**locals()))
+    logger.debug("Reader ID specified in file: '{identifier}'".format(**locals()))
     return identifier

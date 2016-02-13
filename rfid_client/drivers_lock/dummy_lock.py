@@ -1,9 +1,11 @@
-class Reader():
-    def __init__(self):
-        pass
-    def card_scan_callback(self, id):
-        pass
-    def listen(self):
-        pass
+import logging
 
-Driver = Reader
+
+class Lock():
+    def __init__(self):
+        self.logger = logging.getLogger('Lock')
+
+    def open(self):
+        self.logger.debug("Opening door")
+
+Driver = Lock
