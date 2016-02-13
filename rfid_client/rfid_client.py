@@ -1,27 +1,33 @@
-import argparse, os, sys, logging
+import logging
+import traceback
+
+from door_controller import Door
+from utils.comms_factory import get_comms
+from utils.lock_factory import get_lock
+from utils.reader_factory import get_card_reader
 
 
-def set_up_logging(log_filepath = None, output_stdout = True):
-    if output_stdout:
-        pass
+def logging_setup():
+    log_format = '%(asctime)-15s [%(levelname)-8s] %(message)s'
+    logging.basicConfig(format=log_format, level=logging.DEBUG)
 
-    if log_filepath:
-        pass
-
-def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--log_filepath', type=str, action='store', help='Give a filepath where to log stuff')
-
-
-    args = parser.parse_args()
-    return args
 
 def main():
-    args = parse_args()
-    if args.log_filepath:
-        set_up_logging(args.log_filepath)
-    else:
-        set_up_logging(None)
+    logging_setup()
+
+    door = Door()
+
+    door.communication = get_comms()
+    door.lock = get_lock()
+    door.reader = get_card_reader()
+
+    door.reader.read_callback(door.read)
+    door.reader.listen()
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        trace_stack = traceback.format_exc()
+        logging.critical("Unrecoverable error has occurred: {0}".format(str(e)))
+        logging.critical("{0}".format(trace_stack))
