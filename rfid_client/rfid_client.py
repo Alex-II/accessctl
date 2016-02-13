@@ -1,7 +1,7 @@
 import logging
 import traceback
 
-from door_controller import Door
+from controller import Controller
 from utils.comms_factory import get_comms
 from utils.lock_factory import get_lock
 from utils.reader_factory import get_card_reader
@@ -17,15 +17,17 @@ logger.setLevel(level=logging.DEBUG)
 
 
 def main():
-    door = Door()
+    #Controller class manipulates the lock, gets called by the reader and initiates communicate with the server
+    controller = Controller()
 
-    door.communication = get_comms()
-    door.lock = get_lock()
-    door.reader = get_card_reader()
+    controller.communication = get_comms()
+    controller.lock = get_lock()
+    controller.reader = get_card_reader()
 
-    door.reader.read_callback(door.read)
+    #Registring the Controller method we want to be called when a card is read
+    controller.reader.read_callback(controller.read)
 
-    door.reader.listen()
+    controller.reader.listen()
 
 if __name__ == "__main__":
     try:

@@ -4,7 +4,7 @@ from time import sleep
 import threading
 
 
-
+#Dummy reader, it sleeps and calls the Controller with several shitty card IDs (to kinda-simulate quick successive reads)
 class Reader():
     def read_callback(self, callback):
         self.callback = callback
@@ -16,7 +16,7 @@ class Reader():
 
         card_read = card_ids[randint(0,len(card_ids)-1)]
 
-        sleepy_time  = 0.250
+        sleepy_time  = 0.150
 
         self.logger.debug("Sleeping for {sleepy_time} milliseconds".format(**locals()))
         sleep(sleepy_time)

@@ -17,7 +17,7 @@ def setup_logging():
     logger_driver.addHandler(ch)
     logger_driver.setLevel(level=logging.DEBUG)
 
-
+#Calls factory_utils to load the drivers for the Reader class
 def get_card_reader():
     logger.info("* Loading Reader Driver *")
     setup_logging()

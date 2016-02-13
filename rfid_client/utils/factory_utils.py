@@ -71,6 +71,7 @@ def get_availble_drivers(available_driers_file):
                 drivers[identifier] = driver_location
     return drivers
 
+
 def get_driver_identifier(identifier_file):
     '''
     Expects a path to a file containing the id (name) of the driver we wish to load

@@ -17,7 +17,7 @@ def setup_logging():
 
 
 
-
+#Calls factory_utils to load the drivers for the Comm class
 def get_comms():
     logger.info("* Loading Comm Drivers *")
 

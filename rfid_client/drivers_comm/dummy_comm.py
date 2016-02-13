@@ -2,10 +2,9 @@ from random import randint
 import logging
 
 
-
+#It returns a Reply instance when the controller queries for door permission
 class Comm():
     def __init__(self):
-
         self.logger = logging.getLogger('Comms')
         self.logger.debug("  > Dummy Comm Driver - 50/50 of server accepting")
 

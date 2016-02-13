@@ -14,7 +14,7 @@ def setup_logging():
     logger_driver.addHandler(ch)
     logger_driver.setLevel(level=logging.DEBUG)
 
-
+#Calls factory_utils to load the drivers for the Lock class
 def get_lock():
     logger.info("* Loading Lock Driver *")
     setup_logging()

@@ -50,7 +50,7 @@ class Event_Recorder():
         self.events.append(event)
 
 
-class Door:
+class Controller:
     def __init__(self):
         self.communication = None
         self.lock          = None
@@ -74,13 +74,16 @@ class Door:
     def load_offline_access(self):
         pass
 
+    #this method gets called (async) by the reader every time a card is read
     def read(self, id):
         try:
+            #a mutex because we only want to process one read card at a time
             if door_controller_mutex.acquire(False): #non-blocking acquire
                 try:
                     logger.debug("ID {id} was read: processing".format(**locals()))
                     self.add_event(Event.Id_Read(id))
 
+                    # we ask the server if we should open the door for the id - if the server timeouts, we open it anyways and log that fact
                     permission_request = self.communication.get_permission(id)
 
                     if permission_request.valid:
