@@ -16,8 +16,6 @@ logger.addHandler(ch)
 logger.setLevel(level=logging.DEBUG)
 
 
-
-
 def main():
     door = Door()
 

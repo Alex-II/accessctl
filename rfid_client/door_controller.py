@@ -1,6 +1,7 @@
 import logging, datetime
 from time import sleep
-import threading
+import threading, traceback
+
 
 door_controller_mutex = threading.Lock()
 event_log_mutex       = threading.Lock()
@@ -74,27 +75,32 @@ class Door:
         pass
 
     def read(self, id):
-        if door_controller_mutex.acquire(False): #non-blocking acquire
-            try:
-                logger.debug("ID {id} was read: processing".format(**locals()))
-                self.add_event(Event.Id_Read(id))
+        try:
+            if door_controller_mutex.acquire(False): #non-blocking acquire
+                try:
+                    logger.debug("ID {id} was read: processing".format(**locals()))
+                    self.add_event(Event.Id_Read(id))
 
-                permission_request = self.communication.get_permission(id)
+                    permission_request = self.communication.get_permission(id)
 
-                if permission_request.valid:
-                    if permission_request.allow:
-                        self.add_event(Event.Id_Access_Accepted(id, permission_request))
-                        self.lock.open()
+                    if permission_request.valid:
+                        if permission_request.allow:
+                            self.add_event(Event.Id_Access_Accepted(id, permission_request))
+                            self.lock.open()
+                        else:
+                            self.add_event(Event.Id_Access_Rejected(id, permission_request))
                     else:
-                        self.add_event(Event.Id_Access_Rejected(id, permission_request))
-                else:
-                    self.add_event(Event.Id_Allowed_In_Disconnect_State(id, permission_request))
-                    self.lock.open()
+                        self.add_event(Event.Id_Allowed_In_Disconnect_State(id, permission_request))
+                        self.lock.open()
 
-            finally:
-                door_controller_mutex.release()
-        else:
-            self.add_event(Event.Id_Read_While_Busy(id))
-            logger.debug("ID {id} was read but an earlier read is being processed".format(**locals()))
+                finally:
+                    door_controller_mutex.release()
+            else:
+                self.add_event(Event.Id_Read_While_Busy(id))
+                logger.debug("ID {id} was read but an earlier read is being processed".format(**locals()))
 
+        except Exception as e:
+            trace_stack = traceback.format_exc()
+            logger.critical("Unrecoverable error has occurred: {0}".format(str(e)))
+            logger.critical("{0}".format(trace_stack))
 
