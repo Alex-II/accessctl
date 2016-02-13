@@ -58,7 +58,7 @@ class Door:
         self.event_recorder = Event_Recorder()
 
     def add_event(self, event):
-        event_log_mutex.acquire(False)
+        event_log_mutex.acquire(True) #blocking acquire
         try:
             self.event_recorder.events.append(event)
         finally:
@@ -74,7 +74,7 @@ class Door:
         pass
 
     def read(self, id):
-        if door_controller_mutex.acquire(False):
+        if door_controller_mutex.acquire(False): #non-blocking acquire
             try:
                 logger.debug("ID {id} was read: processing".format(**locals()))
                 self.add_event(Event.Id_Read(id))
