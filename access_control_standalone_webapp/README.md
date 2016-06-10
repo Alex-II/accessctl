@@ -21,7 +21,14 @@ The Webapp script will demote itself from root to a non-root user.
 
 
 ### Installing
+Assuming something the OS is something like Raspbian GNU/Linux 8 (jessie)
 
+Needs:
+ * Flask
+ * Flask-Login
+ * Flask-RESTful
+ * Flask-Session
+ 
 
 ### Card Reader
 The Card Reader script interfaces with the hardware rfid card reader, the MFRC522.
@@ -33,7 +40,21 @@ The script loads the list of known valid cards from a file, the 'users.json' fil
 The script rereads the file when it gets a signal from the Webapp script, which is responsible for updating the 'users.json' file.
 
 
-####Details
+##### Details
+The Card Reader reads the config file ('card_reader_settings.json') and the list of users ('users.json').
+It then spawns the Webapp script and passes a unnamed pipe to it.
+
+It then enters its main loop. 
+
+During the main loop:
+ * It verifies whether the Webapp script has changed the user cards list
+   * If the cards list is changed, it rereads the file
+   * It expects the Webapp script to write to the pipe whenever it has changed the cards list
+ * It locks the door if it's been longer than some amount of time since the last valid card was scanned
+ * It polls the card reader to verify whether a card has been scanned
+  * If a card number was read, the card number is compared to the user cards list
+  * If the card number exists in the known list and is set to 'active', the door is opened
+
 
 
 ### Webapp
@@ -44,4 +65,4 @@ It's a webserver that presents a standard interface that allows the add/remove/e
 The webserver has authentication but only has one set of credentials (username/password configured in the 'webapp_settings.json' file)
 
 
-#### Details
+##### Details
