@@ -26,19 +26,19 @@ The Webapp script will demote itself from root to a non-root user.
 ### Card Reader
 The Card Reader script interfaces with the hardware rfid card reader, the MFRC522.
 A user presents an rfid card to the reader and the script gets the user's card number.
-The script compares the user's card number against known valid card numbers.
-
+The script validates the user's card number against known valid card numbers. 
 Only if the card is valid is the door unlocked. 
 
-The script loads the list of known valid cards from a file.
-The script rereads the file containing the list of known valid cards when it gets a signal from the Webapp script
-The Webapp script is the one that updates said file and then notifies the Card Reader script so that it can reread it.
+The script loads the list of known valid cards from a file, the 'users.json' file.
+The script rereads the file when it gets a signal from the Webapp script, which is responsible for updating the 'users.json' file.
 
 
 #### Details
 
-
 ### Webapp
+The Webapp script is responsible for updating the 'users.json' file.
+It's a webserver that presents a standard interface that allows the add/remove/edit of member cards (and setting them to valid or invalid)
+The webserver has authentication but only has one set of credentials (username/password configured in the 'webapp_settings.json' file)
 
 
 #### Details
