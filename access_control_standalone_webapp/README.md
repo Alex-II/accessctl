@@ -26,7 +26,6 @@ Assuming something the OS is something like Raspbian GNU/Linux 8 (jessie)
 Needs:
  * Flask
  * Flask-Login
- * Flask-RESTful
  * Flask-Session
  
 
@@ -66,3 +65,20 @@ The webserver has authentication but only has one set of credentials (username/p
 
 
 ##### Details
+When the Webapp starts, it reads the --pipe argument from the command line.
+That argument is the expected pipe number to which the Webapp script must write when it changes the file.
+
+For example, if you start the Webapp script from the shell, you can pass the digit 1 and in this case, the pipe will stdout.
+
+It reads configs from 'webapp_settings.json'.
+
+It reads the 'users.json' file.
+
+It demotes itself from root user to non-root user, if started as root (which it should, if the Card Reader script starts it)
+
+Then it starts the webserver routine where you need to login (with the credentials configured in 'webapp_settings.json') and then you can see the current user card list and edit individual card entries.
+
+If a change is made when editing a card entry (toggling valid/invalid, changing card number or changing name of card owner), the script rewrites the 'users.json' file and notifies the Card Reader script.
+
+It notifies the Card Reader script by writing a character to the pipe.
+
