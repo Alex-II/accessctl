@@ -9,7 +9,7 @@ There are 2 python scripts:
 The Card Reader script reads the card number of the rfid cards presented to the hardware reader.
 If the card number matches a list of known valid cards, the door is opened.
 
-The Webapp script presents a webgui interface so that the list of valid cards can be identified.
+The Webapp script presents a webgui interface so that the list of valid cards can be viewed and edited.
 
 
 ### Running
