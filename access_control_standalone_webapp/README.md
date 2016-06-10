@@ -38,7 +38,9 @@ The script rereads the file when it gets a signal from the Webapp script, which 
 
 ### Webapp
 The Webapp script is responsible for updating the 'users.json' file.
+
 It's a webserver that presents a standard interface that allows the add/remove/edit of member cards (and setting them to valid or invalid)
+
 The webserver has authentication but only has one set of credentials (username/password configured in the 'webapp_settings.json' file)
 
 
