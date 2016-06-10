@@ -33,8 +33,8 @@ The script loads the list of known valid cards from a file, the 'users.json' fil
 The script rereads the file when it gets a signal from the Webapp script, which is responsible for updating the 'users.json' file.
 
 
-#### Details
-f
+####Details
+
 
 ### Webapp
 The Webapp script is responsible for updating the 'users.json' file.
