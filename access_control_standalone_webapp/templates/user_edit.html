@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+  {% set active_page = "user_management" %}
+{% block content %}
+
+
+
+
+{% set active = user['active'] %}
+{% set card = user['card_number'] %}
+{% set name = user['name'] %}
+{% set editing_new_user = False %}
+
+{% if new_user %}
+    {% set active = True %}
+    {% set editing_new_user = True %}
+{% endif %}
+
+<h1 class="text-center login-title">Update Client Info</h1>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6 col-md-4 col-md-offset-4">
+            
+            <div class="account-wall">
+                <form method="post" class="form-signin" action="/update_user">
+                
+                 <input type="hidden" name="current_name" value="{{ name }}" />
+                 <input type="hidden" name="current_card_number" value="{{ card }}" />
+                 <input type="hidden" name="current_active" value="{{ active }}" />          
+                 <input type="hidden" name="editing_new_user" value="{{ editing_new_user }}" />          
+               
+                
+                <input name="username_field" type="text"     class="form-control" value="{{ name }}" required autofocus {% if new_user %} placeholder="Human's name" {% endif %}>
+                <br/>
+                <input name="card_number_field" type="text" class="form-control" value="{{ card }}" required {% if new_user %} placeholder="123456789 " {% endif %}>
+                <br/>
+                
+                <div class="btn-group" data-toggle="buttons">
+                    <label class="btn btn-default {% if active %} active {% endif %}">
+                        <input type="radio" name="is_active" value="True" {% if active %} checked="checked" {% endif %} > Card Enabled
+                    </label>
+                    <label class="btn btn-default {% if not active %} active {% endif %}">
+                        <input type="radio" name="is_active" value="False" {% if not active %} checked="checked" {% endif %}> Card Disabled
+                    </label>
+                    
+                </div>
+                  <br/>
+                  
+                  <br/><br/><br/>
+                
+                <button class="btn btn-lg btn-warning btn-block" type="submit">
+                    Update User Information</button>
+                    
+                   
+                    
+                   
+                
+                  <br/>
+                
+                </form>
+                
+                <a href="/user_management" class="btn btn-lg btn-info btn-block" role="button">Cancel</a>
+                
+                <br/><br/><br/><br/>
+                
+                {% if not new_user %}
+                 <form method="post" class="form-signin" action="/delete_user">
+                 <input type="hidden" name="current_name" value="{{ name }}" />
+                 <input type="hidden" name="current_card_number" value="{{ card }}" />
+                 <input type="hidden" name="current_active" value="{{ active }}" />          
+                 <button class="btn btn-lg btn-danger btn-block" type="submit">
+                    Delete User</button>
+                 </form>
+                {% endif %}
+                
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+
+                
+{% endblock %}       
