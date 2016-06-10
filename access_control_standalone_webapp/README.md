@@ -34,6 +34,7 @@ The script rereads the file when it gets a signal from the Webapp script, which 
 
 
 #### Details
+f
 
 ### Webapp
 The Webapp script is responsible for updating the 'users.json' file.
