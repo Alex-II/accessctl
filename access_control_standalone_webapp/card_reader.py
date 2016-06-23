@@ -12,6 +12,11 @@ import json
 import fcntl
 import errno
 import code
+import logging
+import sys
+    
+
+log = logging.getLogger("Card Reader Module")
 
 # Capture SIGINT for cleanup when the script is aborted
 def end_read(signal,frame):
@@ -20,14 +25,6 @@ def end_read(signal,frame):
     continue_reading = False
     LockDoor()
     GPIO.cleanup()
-
-
-
-def LogAccessSuccess(card):
-        pass
-        
-def LogAccessFail(card):
-        pass
 
 def UnlockDoor():
         GPIO.output(11, 1)
@@ -105,7 +102,17 @@ def main_loop(total_open_time,  loop_sleep_seconds, users):
             
             
             
-            
+def set_logging(log_level):
+    if log_level:
+        log.setLevel(log_level)
+        ch = logging.StreamHandler()
+        ch.setLevel(log_level)
+        
+        log_format = '%(asctime)-15s - %(levelname)-5s - %(message)s'
+        formatter = logging.Formatter(log_format)
+        ch.setFormatter(formatter)
+        log.addHandler(ch)
+        
             
 def read_config_file(filename = "card_reader_settings.json"):
     with open(filename, 'r') as fd:
@@ -120,6 +127,19 @@ def read_config_file(filename = "card_reader_settings.json"):
             raise ValueError('Expecting key "door_unlocked_seconds" in the json file')
     else:
         door_unlocked_seconds = float(config['door_unlocked_seconds'])
+        
+    if not "log_level" in config:
+            raise ValueError('Expecting key "log_level" in the json file')
+    else:
+        door_unlocked_seconds = config['log_level']
+        if door_unlocked_seconds.upper() == "DEBUG":
+            set_logging(logging.DEBUG)
+        elif door_unlocked_seconds.upper() == "INFO":
+            set_logging(logging.INFO)
+        elif door_unlocked_seconds.upper() == "NONE":
+            set_logging(None)
+        else:
+            raise ValueError('Expecting key "log_level" to be set to "DEBUG", "INFO" or "NONE"')
         
     return (loop_sleep_seconds, door_unlocked_seconds)
             
