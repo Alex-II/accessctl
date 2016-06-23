@@ -17,6 +17,7 @@ import sys
     
 
 log = logging.getLogger("Card Reader Module")
+cards_read_log = logging.getLogger("Cards Scanned")
 
 # Capture SIGINT for cleanup when the script is aborted
 def end_read(signal,frame):
@@ -103,15 +104,26 @@ def main_loop(total_open_time,  loop_sleep_seconds, users):
             
             
 def set_logging(log_level):
+    #normal logging
     if log_level:
         log.setLevel(log_level)
-        ch = logging.StreamHandler()
+        ch = logging.FileHandler("card_reader.log")
         ch.setLevel(log_level)
         
         log_format = '%(asctime)-15s - %(levelname)-5s - %(message)s'
         formatter = logging.Formatter(log_format)
         ch.setFormatter(formatter)
         log.addHandler(ch)
+        
+    #loggin specifically for what cards were scanned, unconditional logging
+    cards_read_log.setLevel(logging.INFO)
+    dh = logging.FileHandler("card_scanned.log")
+    dh.setLevel(logging.INFO)
+    
+    log_format_cards = '%(created),%(message)s'
+    formatter = logging.Formatter(log_format_cards)
+    dh.setFormatter(formatter)
+    cards_read_log.addHandler(dh)
         
             
 def read_config_file(filename = "card_reader_settings.json"):
