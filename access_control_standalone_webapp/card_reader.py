@@ -50,7 +50,8 @@ def child_process_has_signaled(pipe_read):
 def is_card_valid(card_number, users):
     for user in users:
         if user['card_number'] == card_number and user['active'] == True:
-            print "Name: ", user['name']
+            cards_read_log.info("{0}".format(card_number))
+            log.debug("Card {0} for for user: {1}".format(card_number, user['name']))
             return True
         
     return False
@@ -68,24 +69,16 @@ def main_loop(total_open_time,  loop_sleep_seconds, users):
     while continue_reading:
         print '.'
         if child_process_has_signaled(pipe_read):
-            print ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> FILE CHANGED"
+            log.info("Child process has signaled that the users file has been changed: rereading the file")
             users = read_users_file()
-        else:
-            print ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> file not changed"
     
         #maybe it's time to close the door
         if(time.time() > lastValidUnlockTime + total_open_time):
-            print "Door Locked"
+            log.debug("Relocking the door")
             LockDoor()
-        else:
-            print "Door still unlocked"
             
         # Scan for cards
-        (status,TagType) = MIFAREReader.MFRC522_Request(MIFAREReader.PICC_REQIDL)
-
-        # If a card is found
-        if status == MIFAREReader.MI_OK:
-            print "Card detected"
+        (status,TagType) = MIFAREReader.MFRC522_Request(MIFAREReader.PICC_REQIDL)         
 
         # Get the UID of the card
         (status,card_number_list) = MIFAREReader.MFRC522_Anticoll()
@@ -93,13 +86,13 @@ def main_loop(total_open_time,  loop_sleep_seconds, users):
         # If we have the UID, continue
         if status == MIFAREReader.MI_OK:
             card_number = "".join(str(x) for x in card_number_list)
-            print "Card Read:" + str(card_number)
+            log.debug("Card read: {0}".format(card_number))
             if is_card_valid(card_number, users):
                 lastValidUnlockTime = time.time()
-                print "Card valid"
+                log.debug("Card valid and enabled: opening door")
                 UnlockDoor()
             else:
-                print "Card not valid"
+                log.debug("Card read was unknown or disabled")
             
             
             
