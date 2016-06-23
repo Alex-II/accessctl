@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+  {% set active_page = "display_last_scanned_cards" %}
+{% block content %}
+
+<h1 class="text-center login-title">Last 10  Read RFID Cards</h1>
+
+
+
+<div class="container" style="margin-top:20px;">
+
+<br/><br/><br/><br/>
+
+  <div class="row">
+    <div class="col-lg-12">
+    
+      {% for (timestamp, card_read) in cards_read %}
+      
+        <div class="media">
+        <div class="media-body">
+          <p class="media-heading"><strong></strong><p class="small"> <i> {{ timestamp | ctime }}</i>   : <b> {{ card_read }}</b> </p></p>
+          <hr>
+        </div>
+        
+        </div>    
+      {% endfor %}
+      
+   </div>
+ </div>
+</div>
+      
+
+{% endblock %}       
