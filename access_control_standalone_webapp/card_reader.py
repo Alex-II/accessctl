@@ -58,6 +58,7 @@ def is_card_valid(card_number, users):
 
 #total_open_time: how much time to keep the door open if the card was correct
 def main_loop(total_open_time,  loop_sleep_seconds, users):
+    
     lastValidUnlockTime = 0; # keeping track of last time we detected a correct rfid card (so we know how much time to wait)
     
         
@@ -67,7 +68,7 @@ def main_loop(total_open_time,  loop_sleep_seconds, users):
     
     # This loop keeps checking for rfid cards. If one is near it will get the UID and authenticate
     while continue_reading:
-        print '.'
+        time.sleep(loop_sleep_seconds)
         if child_process_has_signaled(pipe_read):
             log.info("Child process has signaled that the users file has been changed: rereading the file")
             users = read_users_file()
