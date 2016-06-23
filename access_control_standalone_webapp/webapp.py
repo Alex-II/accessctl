@@ -217,7 +217,7 @@ def home_page():
 @app.route('/user_management/<card_number>')
 @login_required
 def edit_user(card_number):
-    if int(card_number) == -1: #new user
+    if card_number.isdigit() and int(card_number) == -1: #new user
         return render_template("user_edit.html", user = True, new_user = True)
     
     #editing user
