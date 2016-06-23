@@ -1,5 +1,5 @@
 {
-	"loop_sleep_seconds": "0.2",
+	"loop_sleep_seconds": "0.05",
 	"door_unlocked_seconds": "1.5",
 	"log_level": "Info"
 }
