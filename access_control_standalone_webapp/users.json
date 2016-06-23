@@ -1,67 +1,12 @@
 [
     {
-        "active": true,
-        "card_number": "1234444",
-        "name": "Alex3"
-    },
-    {
-        "active": true,
-        "card_number": "123",
-        "name": "aa"
-    },
-    {
-        "active": true,
-        "card_number": "22",
-        "name": "aa"
-    },
-    {
-        "active": true,
-        "card_number": "23423",
-        "name": "23423"
-    },
-    {
-        "active": true,
-        "card_number": "1243",
-        "name": "sdfs"
-    },
-    {
-        "active": true,
-        "card_number": "234",
-        "name": "sadf"
-    },
-    {
-        "active": true,
-        "card_number": "234",
-        "name": "asdf"
-    },
-    {
-        "active": true,
-        "card_number": "35345",
-        "name": "alexsad"
-    },
-    {
-        "active": true,
-        "card_number": "123434353535",
-        "name": "aaabbcc"
-    },
-    {
         "active": false,
-        "card_number": "3465321111111111111",
-        "name": "aaggsdf"
-    },
-    {
-        "active": true,
-        "card_number": "gh5j357k3",
-        "name": "34"
-    },
-    {
-        "active": true,
-        "card_number": "435234562",
-        "name": "asdas"
-    },
-    {
-        "active": true,
         "card_number": "941432843230",
-        "name": "RandomAlex2"
+        "name": "AlexSquare"
+    },
+    {
+        "active": true,
+        "card_number": "365923919753",
+        "name": "AlexCircle"
     }
 ]
