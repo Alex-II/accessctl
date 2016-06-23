@@ -48,9 +48,10 @@ def child_process_has_signaled(pipe_read):
 
         
 def is_card_valid(card_number, users):
+    cards_read_log.info("{0}".format(card_number))
     for user in users:
         if user['card_number'] == card_number and user['active'] == True:
-            cards_read_log.info("{0}".format(card_number))
+            
             log.debug("Card {0} for for user: {1}".format(card_number, user['name']))
             return True
         
@@ -114,7 +115,7 @@ def set_logging(log_level):
     dh = logging.FileHandler("card_scanned.log")
     dh.setLevel(logging.INFO)
     
-    log_format_cards = '%(created),%(message)s'
+    log_format_cards = '%(created)s,%(message)s'
     formatter = logging.Formatter(log_format_cards)
     dh.setFormatter(formatter)
     cards_read_log.addHandler(dh)
@@ -137,12 +138,12 @@ def read_config_file(filename = "card_reader_settings.json"):
     if not "log_level" in config:
             raise ValueError('Expecting key "log_level" in the json file')
     else:
-        door_unlocked_seconds = config['log_level']
-        if door_unlocked_seconds.upper() == "DEBUG":
+        log_level_config = config['log_level']
+        if log_level_config.upper() == "DEBUG":
             set_logging(logging.DEBUG)
-        elif door_unlocked_seconds.upper() == "INFO":
+        elif log_level_config.upper() == "INFO":
             set_logging(logging.INFO)
-        elif door_unlocked_seconds.upper() == "NONE":
+        elif log_level_config.upper() == "NONE":
             set_logging(None)
         else:
             raise ValueError('Expecting key "log_level" to be set to "DEBUG", "INFO" or "NONE"')
