@@ -1,7 +1,7 @@
 from flask import Flask, render_template, Response, session, flash
 from flask.ext.login import LoginManager, UserMixin, login_required, login_user, logout_user
 from flask_restful import Resource, Api
-import json, flask, os, shutil, signal, sys, pwd, argparse
+import json, flask, os, shutil, signal, sys, pwd, argparse, time
 
 app = Flask(__name__)
 api = Api(app)
@@ -231,10 +231,34 @@ def edit_user(card_number):
             return render_template("user_management.html", users = user_acl.users)
     return render_template("user_edit.html", user = user, new_user = False)
     
+@app.template_filter('ctime')
+def timectime(s):
+    return time.ctime(float(s))
+    
 @app.route('/user_management')
 @login_required
 def user_management_page():
     return render_template("user_management.html", users = user_acl.users)
+    
+    
+@app.route('/display_last_scanned_cards')
+@login_required
+def display_last_scanned_cards_page():
+    try:
+        with open('card_scanned.log','r') as fd:
+            file_contents = fd.readlines()
+            last_ten      = file_contents[-10:]
+            
+            
+            cards_read = []
+            for element in last_ten:
+                cards_read.append( (element.split(",")[0], element.split(",")[1]  )  )
+        
+    except Exception as e:
+        flash(u'Error when trying to read the file containing the list of scannred RFID cards: {0}'.format(e), 'danger')
+        return flask.redirect(flask.url_for('home_page'))
+    
+    return render_template("display_last_scanned_cards.html", cards_read = cards_read)
     
     
 #If we're started by root, we want to drop our privileges
