@@ -48,13 +48,21 @@ def child_process_has_signaled(pipe_read):
 
         
 def is_card_valid(card_number, users):
-    cards_read_log.info("{0}".format(card_number))
+    
     for user in users:
-        if user['card_number'] == card_number and user['active'] == True:
+        if user['card_number'] == card_number:
+            if user['active'] == True:
+                cards_read_log.info("{0}, CARD KNOWN, {1}, {2}".format(card_number, user['name'], "GRANTED"))
+                log.debug("Card {0} for for user: {1}".format(card_number, user['name']))
+                return True
+                
+            else:
+                cards_read_log.info("{0}, CARD KNOWN, {1}, {2}".format(card_number, user['name'], "DENIED"))
+                log.debug("Card {0} for for user: {1}".format(card_number, user['name']))
+                return False
+                
             
-            log.debug("Card {0} for for user: {1}".format(card_number, user['name']))
-            return True
-        
+    cards_read_log.info("{0}, CARD UNKNOWN, NO ASSOCIATED USER, DENIED".format(card_number))
     return False
 
 #total_open_time: how much time to keep the door open if the card was correct

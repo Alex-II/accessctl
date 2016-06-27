@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Response, session, flash
+from flask import Flask, render_template, Response, session, flash, make_response
 from flask.ext.login import LoginManager, UserMixin, login_required, login_user, logout_user
 from flask_restful import Resource, Api
 import json, flask, os, shutil, signal, sys, pwd, argparse, time
@@ -217,7 +217,8 @@ def home_page():
 @app.route('/user_management/<card_number>')
 @login_required
 def edit_user(card_number):
-    if card_number.isdigit() and int(card_number) == -1: #new user
+    print card_number
+    if str(card_number) == '-1': #new users
         return render_template("user_edit.html", user = True, new_user = True)
     
     #editing user
@@ -241,18 +242,38 @@ def user_management_page():
     return render_template("user_management.html", users = user_acl.users)
     
     
+    
+    
+@app.route('/download_all_scanned_cards')
+@login_required
+def download_all_scanned_cards_page():
+    try:
+        with open('card_scanned.log','r') as fd:
+            file_contents = fd.read()
+            
+        response = make_response(file_contents)
+        response.headers["Content-Disposition"] = "attachment; filename=scanned_cards.csv"
+        return response
+            
+        
+    except Exception as e:
+        flash(u'Error when trying to downloading the file containing the list of scannred RFID cards: {0}'.format(e), 'danger')
+        return flask.redirect(flask.url_for('home_page'))
+    
+    return render_template("display_last_scanned_cards.html", cards_read = cards_read)
+    
 @app.route('/display_last_scanned_cards')
 @login_required
 def display_last_scanned_cards_page():
     try:
         with open('card_scanned.log','r') as fd:
             file_contents = fd.readlines()
-            last_ten      = file_contents[-10:]
+            last_      = file_contents[-100:]
             
             
             cards_read = []
-            for element in last_ten:
-                cards_read.append( (element.split(",")[0], element.split(",")[1]  )  )
+            for element in last_:
+                cards_read.append( (element.split(",")[0], element.split(",")[1], element.split(",")[2], element.split(",")[3], element.split(",")[4]  )  )
         
     except Exception as e:
         flash(u'Error when trying to read the file containing the list of scannred RFID cards: {0}'.format(e), 'danger')

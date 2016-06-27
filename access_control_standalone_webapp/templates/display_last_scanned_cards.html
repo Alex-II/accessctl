@@ -2,7 +2,7 @@
   {% set active_page = "display_last_scanned_cards" %}
 {% block content %}
 
-<h1 class="text-center login-title">Last 10  Read RFID Cards</h1>
+<h1 class="text-center login-title">Last 100  Read RFID Cards <br></h1>
 
 
 
@@ -12,12 +12,17 @@
 
   <div class="row">
     <div class="col-lg-12">
-    
-      {% for (timestamp, card_read) in cards_read %}
+    <hr>
+        <div>
+            <a  style="padding: 50px;" href="/download_all_scanned_cards"> Download Scanned Cards CSV File </a>
+        </div>
+        <hr><hr>
+
+      {% for (timestamp, card_number, card_known_or_not, user_associated, access_decision) in cards_read %}
       
         <div class="media">
         <div class="media-body">
-          <p class="media-heading"><strong></strong><p class="small"> <i> {{ timestamp | ctime }}</i>   : <b> {{ card_read }}</b> </p></p>
+          <p class="media-heading"><strong></strong><p class="small"> <i> {{ timestamp | ctime }}</i>   : <b>{{ user_associated }} --- {{ card_known_or_not }} [{{ card_number }}]</b> <i>  </i> <b> >>> {{ access_decision }} </b> </p></p>
           <hr>
         </div>
         

@@ -3,5 +3,10 @@
         "active": true,
         "card_number": "941432843230",
         "name": "AlexSquare"
+    },
+    {
+        "active": false,
+        "card_number": "365923919753",
+        "name": "AlexCircle"
     }
 ]
